@@ -3,24 +3,91 @@ version: 2
 sources:
   - name: orders
     schema: landing
-    description: "Contains customer order data ingested into the landing layer."
+    description: >
+      Contains customer order data ingested into the landing layer.
+      Raw transactional order details before any transformations.
     tables:
       - name: cust_order
         identifier: raw_customer_order
-        description: "Raw transactional data of customer orders before any transformations."
+        description: "Raw transactional customer order data."
+        columns:
+          - name: order_id
+            description: "Unique identifier for each order."
+            tests: [not_null, unique]
+          - name: line_num
+            description: "Line number representing an individual item within the order."
+          - name: customer_id
+            description: "Identifier for the customer who placed the order."
+          - name: customer_name
+            description: "Full name of the customer."
+          - name: customer_email
+            description: "Email address of the customer."
+          - name: customer_phone
+            description: "Contact phone number of the customer."
+          - name: city_name
+            description: "Customer's city name."
+          - name: item_id
+            description: "Identifier for the item ordered."
+            tests: [not_null]
+          - name: item_name
+            description: "Name of the ordered item."
+          - name: variant_name
+            description: "Variant or model name of the item."
+          - name: fuel_type
+            description: "Fuel type associated with the item."
+          - name: warehouse_name
+            description: "Name of the warehouse fulfilling the order."
+          - name: order_date
+            description: "Date when the order was placed."
+          - name: quantity
+            description: "Quantity of items ordered."
+          - name: unit_price
+            description: "Price per unit of the item."
 
   - name: items
     schema: landing
-    description: "Holds item inventory data in the landing layer."
+    description: >
+      Holds item inventory data in the landing layer.
     tables:
       - name: inventory
         identifier: raw_inventory
-        description: "Raw inventory records for items, ingested from the source system."
+        description: "Raw inventory records for items, ingested from source system."
+        columns:
+          - name: item_id
+            description: "Unique identifier for each inventory item."
+            tests: [not_null, unique]
+            data_type: VARCHAR(100)
+          - name: item_name
+            description: "Name or description of the item."
+            data_type: VARCHAR(100)
+          - name: category
+            description: "Category of the item (e.g., SUV, Sedan, Truck)."
+            data_type: VARCHAR(100)
+          - name: variant_name
+            description: "Specific variant or version of the item."
+            data_type: VARCHAR(100)
+          - name: fuel_type
+            description: "Type of fuel used by the item."
+            data_type: VARCHAR(100)
 
   - name: warehouse_loc
     schema: raw
-    description: "Provides raw data related to warehouse locations."
+    description: >
+      Provides raw data related to warehouse locations.
     tables:
       - name: warehouse
         identifier: WAREHOUSE_LOCATIONS
-        description: "Details of each warehouse including city, state, and region, captured in the raw layer."
+        description: "Details of warehouses including city, state, region, and warehouse name."
+        columns:
+          - name: city_name
+            description: "Name of the city where the warehouse is located."
+            data_type: VARCHAR(50)
+          - name: state_name
+            description: "Name of the state where the warehouse is located."
+            data_type: VARCHAR(50)
+          - name: region
+            description: "Geographical region (e.g., North, South, East, West)."
+            data_type: VARCHAR(20)
+          - name: warehouse_name
+            description: "Unique warehouse identifier or code."
+            data_type: VARCHAR(50)

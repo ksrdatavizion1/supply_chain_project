@@ -1,0 +1,74 @@
+version: 2
+
+models:
+  - name: Customer_order
+    description: "Transformed customer order data with enriched and cleaned columns."
+    columns:
+      - name: order_id
+        description: "Unique identifier for each order."
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Identifier for the customer placing the order."
+        tests:
+          - not_null
+      - name: order_date
+        description: "The date when the order was placed."
+        tests:
+          - not_null
+      - name: CUSTOMER_EMAIL
+        description: "Email address of the customer."
+        tests:
+          - not_null
+          - valid_email_format:
+              severity: warn
+              tags: [raw] 
+      - name: customer_phone
+        description: "Phone number of the customer; should be 10 digits."
+        tests:
+          - not_null
+          - column_length_is:
+              expected_length: 10
+              tags: [raw] 
+      - name: quantity
+        description: "Quantity of items in the order."
+        tests:
+          - not_null
+      - name: fuel_type
+        description: "Fuel type of the item in the order."
+        tests:
+          - accepted_values:
+              values: ['Petrol', 'Diesel', 'Electric', 'Hybrid']
+
+  - name: item_inventory
+    description: "Cleaned and categorized inventory of items including fuel and variant types."
+    columns:
+      - name: item_id
+        description: "Unique identifier for each item."
+        tests:
+          - unique
+          - not_null
+      - name: item_name
+        description: "Name of the item."
+        tests:
+          - not_null
+      - name: category
+        description: "Vehicle category the item belongs to (e.g., SUV, Sedan)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SUV', 'Sedan', 'Hatchback', 'Truck']
+              severity: warn
+      - name: fuel_type
+        description: "Fuel type associated with the item."
+        tests:
+          - accepted_values:
+              values: ['Petrol', 'Diesel', 'Electric', 'Hybrid']
+snapshots:
+  - name: customer_order_snapshot
+    description: "Snapshot table for tracking slowly changing dimensions (SCD) of customer orders over time."
+    tests:
+      - no_special_chars:
+          column_names: ["customer_name", "city_name", "item_name", "fuel_type"]
+          tags: ['silver']
