@@ -1,4 +1,3 @@
-
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
@@ -40,25 +39,22 @@ models:
     # Applies to all files under models/example/
     raw:
       +materialized: table
-      +database: supply_chain
+      +database: target.database
       +schema: raw
     silver:
       +materialized: table
-      +database: supply_chain
       +schema: silver
-      +tags: silver
+      +database: target.database
     gold:
       +materialized: table
-      +database: supply_chain
+      +database: target.database
       +schema: gold
-      +tags: gold
 seeds:
   my_new_project:  # Replace with your actual dbt project name
     warehouse_locations:
       +database: supply_chain
       +schema: raw
       +quote_columns: false
-      +tags: raw
       +column_types:
         city_name: VARCHAR(50)
         state_name: VARCHAR(50)
@@ -89,10 +85,11 @@ seeds:
           FROM SUPPLY_CHAIN.AUDIT.MODEL_EXECUTION_LOG
           WHERE model_name = 'warehouse_locations'
             AND row_count = (SELECT COUNT(*) FROM SUPPLY_CHAIN.DEV__RAW.WAREHOUSE_LOCATIONS))
-
 snapshots:
   my_new_project:
     customer:
       +schema: silver
+      +tags: [silver] 
     inventory:
       +schema: silver
+      +tags: [silver] 
