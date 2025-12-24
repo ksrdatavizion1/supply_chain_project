@@ -1,4 +1,3 @@
-
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
@@ -40,25 +39,19 @@ models:
     # Applies to all files under models/example/
     raw:
       +materialized: table
-      +database: supply_chain
       +schema: raw
     silver:
       +materialized: table
-      +database: supply_chain
       +schema: silver
-      +tags: silver
     gold:
       +materialized: table
-      +database: supply_chain
       +schema: gold
-      +tags: gold
 seeds:
   my_new_project:  # Replace with your actual dbt project name
     warehouse_locations:
-      +database: supply_chain
       +schema: raw
+      +tags: [raw] 
       +quote_columns: false
-      +tags: raw
       +column_types:
         city_name: VARCHAR(50)
         state_name: VARCHAR(50)
@@ -66,7 +59,7 @@ seeds:
         warehouse_name: VARCHAR(50)
       +post-hook:
         - >
-          INSERT INTO SUPPLY_CHAIN.AUDIT.MODEL_EXECUTION_LOG (
+          INSERT INTO AUDIT.MODEL_EXECUTION_LOG (
             model_name,
             load_date,
             row_count,
@@ -76,23 +69,29 @@ seeds:
             comments
           )
           SELECT
-          'warehouse_locations',
-          CURRENT_TIMESTAMP,
-          COUNT(*),
-          'warehouse_locations.csv',
-          CURRENT_TIMESTAMP,
-          'SUCCESS',
-          'Seed loaded via dbt seed'
-          FROM SUPPLY_CHAIN.DEV__RAW.WAREHOUSE_LOCATIONS
+            'warehouse_locations',
+            CURRENT_TIMESTAMP,
+            COUNT(*),
+            'warehouse_locations.csv',
+            CURRENT_TIMESTAMP,
+            'SUCCESS',
+            'Seed loaded via dbt seed'
+          FROM {{ generate_schema_name('raw', this) }}.WAREHOUSE_LOCATIONS
           WHERE NOT EXISTS (
-          SELECT 1
-          FROM SUPPLY_CHAIN.AUDIT.MODEL_EXECUTION_LOG
-          WHERE model_name = 'warehouse_locations'
-            AND row_count = (SELECT COUNT(*) FROM SUPPLY_CHAIN.DEV__RAW.WAREHOUSE_LOCATIONS))
+            SELECT 1
+            FROM AUDIT.MODEL_EXECUTION_LOG
+            WHERE model_name = 'warehouse_locations'
+              AND row_count = (
+                SELECT COUNT(*) FROM {{ generate_schema_name('raw', this) }}.WAREHOUSE_LOCATIONS
+              )
+          )
+
 
 snapshots:
   my_new_project:
     customer:
       +schema: silver
+      +tags: [silver] 
     inventory:
       +schema: silver
+      +tags: [silver] 

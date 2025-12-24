@@ -1,20 +1,19 @@
-{{
-    config(
-        materialized="incremental",
-        unique_key="item_id",
-        incremental_strategy="merge",
-        tags=["raw"],
-        pre_hook=[
-            "USE DATABASE {{ target.database }};",
-            "USE SCHEMA LANDING;",
-            "{{ copy_into_inventory() }}",
-        ],
-        post_hook=[
-            """
+--item_inventiry.sql
+{{ config(
+    materialized='incremental',
+    unique_key='item_id',
+     tags=['raw'],
+    pre_hook=[
+        "USE DATABASE {{ target.database }};",
+        "USE SCHEMA LANDING;",
+        "{{ copy_into_inventory() }}"
+    ],
+    post_hook=[
+        """
         DELETE FROM {{ target.database }}.LANDING.RAW_INVENTORY
         WHERE LOAD_TS < DATEADD(DAY, -90, CURRENT_DATE);
         """,
-            """
+        """
                INSERT INTO {{ target.database }}.AUDIT.MODEL_EXECUTION_LOG (
                     model_name,
                     load_date,
@@ -42,19 +41,18 @@
                 )
                 GROUP BY STG_FILE_NAME;
 
-        """,
-        ],
-    )
-}}
+        """
+    ]
+) }}
 
-select
-    item_id::varchar(100) as item_id,
-    item_name::varchar(100) as item_name,
-    category::varchar(100) as category,
-    variant_name::varchar(100) as variant_name,
-    fuel_type::varchar(100) as fuel_type
-from {{ source("items", "inventory") }}
+ SELECT
+    item_id:: VARCHAR(100)           AS item_id,
+    item_name ::VARCHAR(100)        AS item_name,
+    category ::VARCHAR(100)        AS category,
+    variant_name:: VARCHAR(100)    AS variant_name,
+    fuel_type ::VARCHAR(100)       AS fuel_type
+FROM {{ source('items', 'inventory') }}
 
 {% if is_incremental() %}
-    where item_id not in (select item_id from {{ this }})
+WHERE item_id NOT IN (SELECT item_id FROM {{ this }})
 {% endif %}
