@@ -46,6 +46,7 @@ models:
       +materialized: table
       +database: supply_chain
       +schema: silver
+      +tags: silver
     gold:
       +materialized: table
       +database: supply_chain
