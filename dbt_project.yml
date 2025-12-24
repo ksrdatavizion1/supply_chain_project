@@ -39,15 +39,12 @@ models:
     # Applies to all files under models/example/
     raw:
       +materialized: table
-      +database: target.database
       +schema: raw
     silver:
       +materialized: table
       +schema: silver
-      +database: target.database
     gold:
       +materialized: table
-      +database: target.database
       +schema: gold
 seeds:
   my_new_project:  # Replace with your actual dbt project name
