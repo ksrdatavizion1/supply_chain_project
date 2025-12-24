@@ -49,7 +49,6 @@ models:
 seeds:
   my_new_project:  # Replace with your actual dbt project name
     warehouse_locations:
-      +database: supply_chain
       +schema: raw
       +quote_columns: false
       +column_types:
