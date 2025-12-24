@@ -3,19 +3,24 @@ version: 2
 sources:
   - name: orders
     schema: landing
-    database: supply_chain
+    description: "Contains customer order data ingested into the landing layer."
     tables:
       - name: cust_order
         identifier: raw_customer_order
+        description: "Raw transactional data of customer orders before any transformations."
+
   - name: items
     schema: landing
-    database: supply_chain
+    description: "Holds item inventory data in the landing layer."
     tables:
       - name: inventory
-        identifier: RAW_INVENTORY
-  - name : warehouse_loc
+        identifier: raw_inventory
+        description: "Raw inventory records for items, ingested from the source system."
+
+  - name: warehouse_loc
     schema: raw
-    database: supply_chain
+    description: "Provides raw data related to warehouse locations."
     tables:
       - name: warehouse
         identifier: WAREHOUSE_LOCATIONS
+        description: "Details of each warehouse including city, state, and region, captured in the raw layer."
