@@ -1,4 +1,5 @@
 {{ config(
+     tags=['gold'],
     alias='DIM_DATE'
 ) }}
 

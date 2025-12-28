@@ -1,5 +1,6 @@
+-- macros/copy_into_customer_order.sql
 {% macro copy_into_customer_order() %}
-    COPY INTO supply_chain.landing.raw_customer_order
+    COPY INTO {{ target.database }}.LANDING.raw_customer_order
     FROM (
         SELECT
             $1  ::STRING         AS order_id,
@@ -20,9 +21,9 @@
             METADATA$FILENAME,
             METADATA$FILE_ROW_NUMBER,
             METADATA$FILE_LAST_MODIFIED,
-            CURRENT_TIMESTAMP  -- as load_ts
+            CURRENT_TIMESTAMP    AS load_ts
         FROM @ext_stage_storage_int/customer_order/
-            (FILE_FORMAT => 'SUPPLY_CHAIN.LANDING.MY_CSV_FORMAT'))
-             ON_ERROR = 'CONTINUE';
-      
+            (FILE_FORMAT => {{ target.database }}.LANDING.MY_CSV_FORMAT)
+    )
+    ON_ERROR = 'CONTINUE';
 {% endmacro %}

@@ -1,8 +1,12 @@
+-- depends_on: {{ source('warehouse_loc', 'warehouse') }}
+
 {{ config(
     materialized='incremental',
-    unique_key='warehouse_name',
+    unique_key='WAREHOUSE_NAME',
     tags=['silver'],
-    incremental_strategy='delete+insert'
+    on_schema_change='sync_all_columns',
+    incremental_strategy='merge',
+    merge_update_columns = ['CITY_NAME', 'STATE_NAME', 'REGION']
 ) }}
 
 {% set src = source('warehouse_loc', 'warehouse') %}
@@ -12,11 +16,5 @@ SELECT
     STATE_NAME,
     REGION,
     WAREHOUSE_NAME,
-    
-    {% if is_incremental() %}
-        ingestion_ts
-    {% else %}
-        CURRENT_TIMESTAMP AS ingestion_ts
-    {% endif %}
-
+    CURRENT_TIMESTAMP AS INGESTION_TS
 FROM {{ target.database }}.{{ target.schema }}_{{ src.schema }}.{{ src.identifier }}
