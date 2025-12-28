@@ -1,9 +1,10 @@
+-- with post hook:
 {% snapshot item_inventory_snapshot  %}
 {{
     config(
-      target_database='supply_chain',
       unique_key='ITEM_ID',
       strategy='check',
+      tags=['silver']  ,
       check_cols=[
         'ITEM_ID',
         'ITEM_NAME',
@@ -53,5 +54,3 @@ SELECT
 FROM {{ ref('item_inventory') }}
 
 {% endsnapshot %}
-
-

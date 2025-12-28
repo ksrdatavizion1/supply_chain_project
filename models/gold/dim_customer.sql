@@ -1,5 +1,8 @@
+-- models/gold/dim_customer.sql
+
 {{ config(
-    alias='DIM_CUSTOMER'
+    alias='DIM_CUSTOMER',
+     tags=['gold']
 ) }}
 
 SELECT DISTINCT
@@ -10,5 +13,3 @@ SELECT DISTINCT
     CITY_NAME
 FROM {{ ref('customer_order_snapshot') }}
 WHERE DBT_VALID_TO IS NULL
-
-

@@ -1,4 +1,7 @@
+-- models/gold/fact_customer_order.sql
+
 {{ config(
+   tags=['gold'],
     alias='FACT_CUSTOMER_ORDER'
 ) }}
 

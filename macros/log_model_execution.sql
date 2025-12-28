@@ -15,7 +15,7 @@
 
   {# 2. Check if log already exists today for this model #}
   {% set already_logged_query %}
-    SELECT COUNT(*) FROM {{ target.database }}.AUDIT.MODEL_EXECUTION_LOG
+    SELECT COUNT(*) FROM SUPPLY_CHAIN.AUDIT.MODEL_EXECUTION_LOG
     WHERE model_name = '{{ model_name }}'
       AND CAST(load_date AS DATE) = CURRENT_DATE
   {% endset %}
@@ -29,7 +29,7 @@
   {# 3. Insert only if not logged yet and row_count > 0 #}
   {% if already_logged == 0  %}
     {% set insert_query %}
-      INSERT INTO {{ target.database }}.AUDIT.MODEL_EXECUTION_LOG (
+      INSERT INTO SUPPLY_CHAIN.AUDIT.MODEL_EXECUTION_LOG (
           model_name,
           load_date,
           row_count,

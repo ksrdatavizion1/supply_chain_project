@@ -1,4 +1,7 @@
+-- models/gold/dim_item.sql
+
 {{ config(
+     tags=['gold'],
     alias='DIM_ITEM'
 ) }}
 

@@ -3,6 +3,7 @@
     config(
       unique_key='order_id',
       strategy='check',
+      tags=['silver']  ,
       check_cols=[
         'line_num',
         'customer_id',
@@ -36,7 +37,7 @@ SELECT
     INITCAP(item_name)     AS item_name,
     INITCAP(variant_name)  AS variant_name,
     INITCAP(fuel_type)     AS fuel_type,
-    warehouse_name,
+    warehouse_name AS warehouse_name,
     order_date,
     quantity,
     unit_price,
